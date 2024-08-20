@@ -1,15 +1,21 @@
 #In this SQL, I'm querying a database with multiple tables in it to quantify statistics about customer and order data. 
 
+#How many orders were placed in January?
+
 SELECT COUNT(orderid) 
 FROM BIT_DB.JanSales
 WHERE length(orderid) = 6
 AND order_id <> 'Order ID';
+
+#How many of those orders were for an iPhone?
 
 SELECT COUNT(orderid)
 FROM BIT_DB.JanSales
 WHERE Product='iPhone'
 AND length(orderid) = 6
 AND orderid <> 'Order ID'
+
+#Select the customer account numbers for all the orders that were placed in February.
 
 SELECT DISTINCT acctnum
 FROM BIT_DB.customers
@@ -18,18 +24,26 @@ ON customers.order_id=FebSales.orderID
 AND length(orderid) = 6
 AND orderid <> 'Order ID';
 
+#Which product was the cheapest one sold in January, and what was the price?
+
 SELECT DISTINCT product, price
 FROM BIT_DB.JanSales
 ORDER BY price ASC LIMIT 1
+
+#What is the total revenue for each product sold in January?
 
 SELECT sum(quantity)*price as Revenue, product
 FROM BIT_DB.JanSales
 GROUP BY Product;
 
+#Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue?
+
 SELECT product, Sum(quantity), sum(quantity)*price as Revenue
 FROM BIT_DB.FebSales
 WHERE location='548 Lincoln St, Seattle, WA 98101'
 GROUP BY product
+
+How many customers ordered more than 2 products at a time in February, and what was the average amount spent for those customers?
 
 SELECT count(distinct cust.acctnum), avg(quantity*price)
 FROM BIT_DB.customers cust
@@ -38,3 +52,10 @@ ON cust.order_id=FebSales.orderID
 WHERE quantity > 2
 AND length(orderid) = 6
 AND orderid <> 'Order ID';
+
+List all the products sold in Los Angeles in February, and include how many of each were sold.
+
+SELECT product, SUM(quantity)
+FROM BIT_DB.FebSales
+WHERE location LIKE '%Los Angeles%'
+GROUP BY Product;
